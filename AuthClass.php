@@ -1,5 +1,6 @@
 <?php
 session_start();
+include_once "MysqlClass.php";
 
 /**
  * Authorization class
@@ -26,6 +27,7 @@ class AuthClass
      * Authorization
      * @param string $login
      * @param string $passwors
+     * @return boolean
      */
     public function auth($login, $passwors)
     {
@@ -35,8 +37,15 @@ class AuthClass
         if (!$this->check($passwors)) {
             return "error_password";
         }
-        $_SESSION["is_auth"] = true; //Делаем пользователя авторизованным
-        $_SESSION["login"] = $login; //Записываем в сессию логин пользователя
+        $db = new MysqlClass(SERVER, USER, PASS, DBNAME);
+        $q = $db->select("*", 'users', "username = '" . $login . "'");
+
+        if (($q) && md5($passwors) == $q[0]['password']) {
+            $_SESSION["is_auth"] = true; //Делаем пользователя авторизованным
+            $_SESSION["login"] = $login; //Записываем в сессию логин пользователя
+        }else{
+            return "not_auth";
+        }
         return false;
     }
 

@@ -14,7 +14,7 @@ class MysqlClass
         $this->openConnection();
     }
 
-    public function openConnection()
+    private function openConnection()
     {
         if (!$this->db) {
             $this->mysqli = new mysqli($this->server, $this->user, $this->pass, $this->dbname);
@@ -44,8 +44,9 @@ class MysqlClass
         if ($order != null) $sql .= ' ORDER BY ' . $order;
 
         $query = $this->mysqli->query($sql);
-        if ($query) {
-            $rows = mysqli_num_rows($query);
+        if ($query && !empty($query)) {
+            if (!($rows = mysqli_num_rows($query)))
+                return false;
             for ($i = 0; $i < $rows; $i++) {
                 $results = mysqli_fetch_assoc($query);
                 $key = array_keys($results);
@@ -59,6 +60,7 @@ class MysqlClass
             return false;
         }
     }
+
 
     public function insert($table, $values, $rows = null)
     {
@@ -107,9 +109,11 @@ class MysqlClass
 
 include_once "config.php";
 $db = new MysqlClass(SERVER, USER, PASS, DBNAME);
-$names = $db->select('*', 'books');
+/*$names = $db->select('*', 'books');
 echo '<pre>';
 print_r($names);
 echo '</pre>';
+
 //$db->insert('names', array('NULL','Влад'));
 $db->closeConnection();
+*/
