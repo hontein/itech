@@ -1,12 +1,13 @@
 <?php
 session_start();
 include_once "MysqlClass.php";
+include_once "BaseClass.php";
 
 /**
  * Authorization class
  * @author Roman Morozov <mrm1989@mail.ru>
  */
-class AuthClass
+class AuthClass extends BaseClass
 {
 
     /**
@@ -60,24 +61,6 @@ class AuthClass
             return $_SESSION["login"]; //Return the login name that is stored in session
         }
     }
-
-    /**
-     * Validation string
-     * Return false if string not correct
-     * @return boolean
-     */
-    private function check($str)
-    {
-        $temp = $str;
-        $temp = trim($temp);
-        $temp = htmlspecialchars($temp);
-        $temp = strip_tags($temp);
-        if ($temp == $str)
-            return true;
-        else
-            return false;
-    }
-
 
     /**
      * Session destroy
