@@ -1,5 +1,11 @@
 <?php
+include_once "config.php";
 
+
+/**
+ * Class for work with Mysql
+ * @author Roman Morozov <mrm1989@mail.ru>
+ */
 class MysqlClass
 {
 
@@ -38,6 +44,7 @@ class MysqlClass
 
     public function select($what, $from, $where = null, $order = null)
     {
+
         $fetched = array();
         $sql = 'SELECT ' . $what . ' FROM ' . $from;
         if ($where != null) $sql .= ' WHERE ' . $where;
@@ -80,6 +87,33 @@ class MysqlClass
 
     }
 
+    public function update($table, $rows, $where, $condition)
+    {
+
+        $where = implode($condition, $where);
+        $update = 'UPDATE ' . $table . ' SET ';
+        $keys = array_keys($rows);
+        for ($i = 0; $i < count($rows); $i++) {
+            if (is_string($rows[$keys[$i]])) {
+                $update .= $keys[$i] . '="' . $rows[$keys[$i]] . '"';
+            } else {
+                $update .= $keys[$i] . '=' . $rows[$keys[$i]];
+            }
+
+            if ($i != count($rows) - 1) {
+                $update .= ',';
+            }
+        }
+        $update .= ' WHERE ' . $where;
+        $query = $this->mysqli->query($update);
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     public
     function delete($table, $where = null)
     {
@@ -107,13 +141,3 @@ class MysqlClass
 
 }
 
-include_once "config.php";
-$db = new MysqlClass(SERVER, USER, PASS, DBNAME);
-/*$names = $db->select('*', 'books');
-echo '<pre>';
-print_r($names);
-echo '</pre>';
-
-//$db->insert('names', array('NULL','Влад'));
-$db->closeConnection();
-*/
